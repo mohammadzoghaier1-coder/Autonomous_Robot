@@ -56,10 +56,10 @@ using namespace std;
 int encoderPolesCount = 14;
 float motorGearRatio = 29;
 float wheelDiameter = 4.6;  //cm
-float baseSpeed = 130;
+float baseSpeed = 135;
 
 const int Step = 21;
-const int WALL_DETECTED = 16;
+const int WALL_DETECTED = 12;
 
 float targetDistance_cm = Step;
 float targetWallDistance = 6;
@@ -190,7 +190,7 @@ const int SYNC_MAX_CORRECTION = 5;
 const float SYNC_KP = 1.0;
 
 // TURN PID TUNING
-const float TURN_SPEED_MAX = 125.0;
+const float TURN_SPEED_MAX = 130.0;
 const float TURN_TOLERANCE = 2;
 const float TURN_MIN_EFFECTIVE_SPEED = 110;
 const float TURN_INTEGRAL_LIMIT = 10.0;
