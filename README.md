@@ -58,7 +58,7 @@ Main_Code/
     └── Code.ino               - Main Arduino/embedded system code
 
 SecondaryCode/
-└── Code.ino                   - Supporting Arduino code
+└── Code.ino                   - Secondary code uses a different algorithms, which are DFS and BFS
 
 mazes/
 ├── Maze8x8.txt                - 8×8 maze configuration
