@@ -41,10 +41,10 @@ The system combines:
 
 ## 📁 Repository Structure
 
-
+```text
 .github/
-├── workflows/
-│   └── ci.yml                 - GitHub Actions workflow for CI
+└── workflows/
+    └── ci.yml                 - GitHub Actions workflow for CI
 
 Algorithms/
 ├── FloodFill.cpp              - Flood Fill algorithm implementation
@@ -66,7 +66,7 @@ mazes/
 
 .gitignore                     - Git ignored files
 README.md                      - Repository documentation
-
+```
 ---
 
 ## 🧠 Navigation Algorithm
