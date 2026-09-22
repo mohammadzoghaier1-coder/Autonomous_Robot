@@ -46,22 +46,22 @@ The system combines:
 
 - **`Algorithms/`** – Contains algorithm implementations.
   - `FloodFill.cpp` – Flood Fill algorithm implementation.
-  - `NewFloodFill.cpp` – Updated/alternative Flood Fill implementation.
+  - `NewFloodFill.cpp` – Updated Flood Fill implementation.
 
-- **`Debugging_Motors_Encoders_M.../`** – Code and experiments for debugging motors and encoders.
+- **`Debugging_Motors_Encoders_M.../`** – Contains code and experiments for debugging motors and encoders.
 
 - **`Main_Code/Code/`** – Main Arduino/embedded system code.
   - `Code.ino` – Main program.
 
-- **`SecondaryCode/`** – Secondary/supporting Arduino code.
-  - `Code.ino` – Supporting program used alongside the main code.
+- **`SecondaryCode/`** – Supporting Arduino code.
+  - `Code.ino` – Secondary/supporting program.
 
-- **`mazes/`** – Maze files used for testing and development.
+- **`mazes/`** – Maze files used for testing.
   - `Maze8x8.txt` – 8×8 maze configuration.
   - `maze1_5x5.map` – 5×5 maze map.
 
-- **`.gitignore`** – Specifies files and folders ignored by Git.
-- **`README.md`** – Documentation and overview of the repository.
+- **`.gitignore`** – Files and folders ignored by Git.
+- **`README.md`** – Repository documentation.
 
 ---
 
