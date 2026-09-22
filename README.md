@@ -41,27 +41,31 @@ The system combines:
 
 ## 📁 Repository Structure
 
-- **`.github/workflows/`** – GitHub Actions workflow for CI.
-  - `ci.yml` – Continuous Integration configuration.
 
-- **`Algorithms/`** – Contains algorithm implementations.
-  - `FloodFill.cpp` – Flood Fill algorithm implementation.
-  - `NewFloodFill.cpp` – Updated Flood Fill implementation.
+.github/
+├── workflows/
+│   └── ci.yml                 - GitHub Actions workflow for CI
 
-- **`Debugging_Motors_Encoders_M.../`** – Contains code and experiments for debugging motors and encoders.
+Algorithms/
+├── FloodFill.cpp              - Flood Fill algorithm implementation
+└── NewFloodFill.cpp           - Updated Flood Fill implementation
 
-- **`Main_Code/Code/`** – Main Arduino/embedded system code.
-  - `Code.ino` – Main program.
+Debugging_Motors_Encoders_M.../
+                              - Motor and encoder debugging experiments
 
-- **`SecondaryCode/`** – Supporting Arduino code.
-  - `Code.ino` – Secondary/supporting program.
+Main_Code/
+└── Code/
+    └── Code.ino               - Main Arduino/embedded system code
 
-- **`mazes/`** – Maze files used for testing.
-  - `Maze8x8.txt` – 8×8 maze configuration.
-  - `maze1_5x5.map` – 5×5 maze map.
+SecondaryCode/
+└── Code.ino                   - Supporting Arduino code
 
-- **`.gitignore`** – Files and folders ignored by Git.
-- **`README.md`** – Repository documentation.
+mazes/
+├── Maze8x8.txt                - 8×8 maze configuration
+└── maze1_5x5.map              - 5×5 maze map
+
+.gitignore                     - Git ignored files
+README.md                      - Repository documentation
 
 ---
 
