@@ -13,17 +13,9 @@ https://micromouse.site/
 
 ## 👥 Team Members
 
-### Mohammed Zogahyyer
-
-GitHub: https://github.com/mohammadzoghaier1-coder
-
-### Belal Amleh
-
-GitHub: https://github.com/Belal-amleh
-
-### Omar Abu Fanoon
-
-GitHub: https://github.com/omarmohammadabufanoon
+* [Mohammed Zogahyyer](https://github.com/mohammadzoghaier1-coder)
+* [Belal Amleh](https://github.com/Belal-amleh)
+* [Omar Abu Fanoon](https://github.com/omarmohammadabufanoon)
 
 ---
 
