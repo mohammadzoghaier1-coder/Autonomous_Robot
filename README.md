@@ -1,682 +1,517 @@
-# 🇵🇸 Zahtar — Autonomous MicroMouse Robot
+# Zahtar — Autonomous MicroMouse Robot
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Platform-ESP32-blue" />
-  <img src="https://img.shields.io/badge/Algorithm-Flood--Fill-orange" />
-  <img src="https://img.shields.io/badge/Competition-2026-green" />
-  <img src="https://img.shields.io/badge/Result-5th%20Place-gold" />
-</p>
+## 🏆 Competition
 
-<p align="center">
-  An autonomous maze-solving robot developed for the first MicroMouse Maze Competition in Palestine.
-</p>
+Zahtar was developed to participate in the **first-ever MicroMouse Maze Competition in Palestine**, established and organized by **Code Academy** and funded by **Gaza Sky Geeks**.
 
----
+The competition challenged participants to design and program autonomous maze-solving robots capable of navigating an unknown maze, discovering its layout, and reaching the goal as efficiently as possible.
 
-# 🏆 Competition
+Our robot **Zahtar achieved 5th place** in the competition, successfully solving the maze in approximately **1 minute**.
 
-**Zahtar** is an autonomous MicroMouse robot developed to compete in the **first-ever MicroMouse Maze Competition in Palestine**.
+Competition website:
+https://micromouse.site/
 
-The competition was established by **Code Academy** and funded by **Gaza Sky Geeks**, providing a platform for robotics and autonomous maze-solving projects in Palestine.
+## 👥 Team Members
 
-Our team successfully achieved:
+### Mohammed Zogahyyer
 
-## 🥇 5th Place
+GitHub: https://github.com/mohammadzoghaier1-coder
 
-with a maze-solving time of approximately:
+### Belal Amleh
 
-## ⏱️ 1 Minute
+GitHub: https://github.com/Belal-amleh
 
-The official competition website and results can be found here:
+### Omar Abu Fanoon
 
-**[🌐 MicroMouse Maze Competition](https://micromouse.site/)**
+GitHub: https://github.com/omarmohammadabufanoon
 
 ---
 
-# 📖 Repository Contents
+## 📖 Project Overview
+
+**Zahtar** is an autonomous MicroMouse-style maze-solving robot built using an **ESP32**.
+
+The robot is designed to explore an unknown maze, detect walls using distance sensors, maintain its orientation and position using an IMU and wheel encoders, and calculate an efficient path to the maze's center using a **Flood-Fill navigation algorithm**.
+
+The system combines:
+
+* Autonomous maze exploration
+* Flood-Fill path planning
+* Wheel encoder feedback
+* PID motor control
+* IMU-based orientation control
+* Laser distance sensors for wall detection and alignment
+* Front-wall detection
+* Automatic dead-end handling and backtracking
+* Bluetooth communication for debugging and monitoring
+
+---
+
+## 📂 Repository Contents
 
 ```text
-├── floodfill.cpp
-│   └── Main ESP32 Arduino firmware
+├── FloodFill/
+│   └── Main Arduino Code
 │
-├── micromouse.stl
-│   └── 3D-printable robot chassis
+├── Chassis/
+│   └── 3D Model / STL Files
 │
-├── Interface_Presentation.pdf
-│   └── Project and design presentation
+├── Presentation/
+│   └── Interface_Presentation.pdf
 │
 └── README.md
-    └── Project documentation
 ```
 
 ---
 
-# 🤖 Project Overview
+## 🧠 Navigation Algorithm
 
-**Zahtar** is an autonomous differential-drive MicroMouse robot designed to explore and solve a maze without human control.
+Zahtar uses a **Flood-Fill algorithm** to navigate the maze.
 
-The robot combines:
+The maze is represented as a grid where every cell contains a flood value representing its distance from the goal.
 
-* 🧠 Flood-Fill maze-solving
-* 📏 VL53L0X distance sensors
-* 🧭 MPU6050 motion sensing
-* ⚙️ Quadrature wheel encoders
-* 🚗 Dual DC motors
-* 📡 Bluetooth communication
-* 🎛️ PID motion control
-* 🧱 Front-wall detection
-* 🗺️ Dynamic maze mapping
+As the robot discovers new walls, the maze representation is updated and the flood values are recalculated.
 
-The robot senses the maze, records walls and open paths, updates its flood-fill values, selects the next direction, and moves through the maze cell by cell.
+### Exploration Process
+
+The navigation system is divided into several stages:
+
+1. **First Exploration**
+
+   * The robot starts from the maze entrance.
+   * It detects walls while moving through the maze.
+   * The discovered walls are stored in the maze representation.
+   * Flood values are continuously updated.
+
+2. **Second Exploration**
+
+   * The robot uses the information collected during the first exploration.
+   * It continues refining its understanding of the maze.
+   * Previously discovered paths and walls help improve navigation.
+
+3. **Speed Run**
+
+   * After learning the maze, the robot calculates an efficient route.
+   * It follows the known path at higher speed.
+   * Movement and turning are controlled using encoder, IMU, and distance feedback.
+
+### Goal
+
+The Flood-Fill implementation uses the **four center cells of the maze as goal cells**, allowing the robot to recognize the center area regardless of which of the four cells it reaches.
 
 ---
 
-# 🧠 Navigation Algorithm
+## 🗺️ Maze Representation
 
-The main navigation algorithm used by Zahtar is **Flood-Fill**.
+The maze is represented using a grid containing information about:
 
-The implementation is divided into three phases.
-
-## 1. First Exploration
-
-The robot begins at the maze entrance and explores the maze while collecting information about its surroundings.
-
-During this phase, the robot records:
-
-* Walls
-* Open paths
+* Cell coordinates
+* Known walls
 * Visited cells
-* Traveled paths
+* Flood values
+* Traversed paths
+* Goal cells
 
-The flood-fill values are continuously updated as new maze information is discovered.
+The robot updates this information during exploration.
 
----
-
-## 2. Smart Exploration
-
-During the second exploration run, the robot continues exploring the maze while giving preference to unexplored paths when multiple possible directions have the same flood value.
-
-This allows the robot to gather additional information about the maze and improve its knowledge of the available paths.
+The flood map allows the robot to select the neighboring cell with the lowest flood value while considering the walls it has discovered.
 
 ---
 
-## 3. Final Speed Run
+## 🔧 Hardware
 
-Once enough information about the maze has been collected, the robot calculates a shortest confirmed path toward the center goal.
+The main hardware components used in Zahtar include:
 
-The robot then performs its final speed run.
-
-```text
-START
-  │
-  ▼
-┌──────────────────────┐
-│ First Exploration    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ Maze Mapping         │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ Smart Exploration    │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ Confirmed Maze       │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ Shortest Path        │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ Final Speed Run      │
-└──────────────────────┘
-```
-
-The firmware uses an **8×8 flood-fill grid** with four center cells as the goal region.
+| Component              | Purpose                             |
+| ---------------------- | ----------------------------------- |
+| ESP32                  | Main controller                     |
+| VL53L0X ×2             | Left and right distance measurement |
+| MPU6050                | Orientation and yaw measurement     |
+| DC Motors ×2           | Robot movement                      |
+| Quadrature Encoders ×2 | Wheel movement feedback             |
+| IR Sensor              | Front-wall detection                |
+| Motor Driver           | Motor control                       |
+| Battery                | Power source                        |
 
 ---
 
-# 🗺️ Maze Representation
+## 📡 VL53L0X Distance Sensors
 
-The flood-fill system maintains several data structures to represent the discovered maze.
-
-```cpp
-floodGrid
-floodWalls
-floodKnown
-floodVisited
-floodTraveled
-```
-
-| Data Structure  | Purpose                                  |
-| --------------- | ---------------------------------------- |
-| `floodGrid`     | Stores flood-fill distance values        |
-| `floodWalls`    | Stores discovered walls                  |
-| `floodKnown`    | Stores whether an edge has been explored |
-| `floodVisited`  | Tracks visited cells                     |
-| `floodTraveled` | Tracks paths already traveled            |
-
-The robot maintains its current maze coordinates using:
-
-```cpp
-int floodMouseX = 0;
-int floodMouseY = 0;
-```
-
----
-
-# ⚙️ Hardware
-
-## ESP32
-
-The **ESP32** is the main controller of Zahtar.
-
-It handles:
-
-* Motor control
-* Encoder interrupts
-* Distance sensors
-* MPU6050 communication
-* Flood-fill navigation
-* PID calculations
-* Wall detection
-* Bluetooth communication
-
----
-
-# 📏 Distance Sensors
-
-## 2× VL53L0X
-
-Two VL53L0X time-of-flight distance sensors are mounted on the robot to measure the distance to the left and right maze walls.
-
-```text
-                  FRONT
-                    ↑
-
-          ┌─────────────────┐
-          │                 │
-          │   LEFT  RIGHT   │
-          │   VL53  VL53    │
-          │                 │
-          │     ZAHTAR      │
-          │                 │
-          └─────────────────┘
-```
+Zahtar uses **two VL53L0X Time-of-Flight distance sensors** to measure the distance to the left and right maze walls.
 
 The sensors are used for:
 
-* Side-wall detection
+* Wall detection
 * Robot centering
-* Lateral correction
-* Wall following
-* Maze mapping
+* Lateral alignment
+* Wall-following correction
+* Detecting changes in the maze environment
 
-The left sensor is assigned the I²C address:
+The ESP32 communicates with the sensors through **I²C**.
+
+Because both VL53L0X sensors initially use the same I²C address, the XSHUT pins are used during initialization to configure the sensors separately.
+
+---
+
+## 🧭 MPU6050
+
+An **MPU6050 IMU** is used to track the robot's orientation.
+
+The robot uses yaw information to:
+
+* Maintain a straight heading
+* Correct rotational drift
+* Perform controlled 90° turns
+* Perform 180° turns
+* Verify the robot's final orientation after movement
+
+---
+
+## ⚙️ Motors & Encoders
+
+Zahtar uses two DC motors with quadrature encoders.
+
+The encoders provide feedback about wheel rotation and are used for:
+
+* Measuring travelled distance
+* Synchronizing the left and right wheels
+* Detecting movement problems
+* Controlling straight-line movement
+* Controlling the robot's movement distance
+
+The current configuration uses:
 
 ```text
-0x30
+Encoder poles: 14
+Motor gear ratio: 29
+Wheel diameter: 46 mm
 ```
+
+Encoder feedback is processed using ESP32 interrupt routines.
 
 ---
 
-# 🧭 MPU6050
+## 📐 Robot Dimensions
 
-The MPU6050 is used to determine the robot's orientation and yaw angle.
+The robot was designed specifically for MicroMouse-style maze navigation.
 
-The robot uses yaw feedback for:
+| Specification    |      Value |
+| ---------------- | ---------: |
+| Maze cell size   | 24 × 24 cm |
+| Chassis diameter |     122 mm |
+| Wheel diameter   |      46 mm |
 
-* Maintaining its heading
-* Correcting its orientation
-* 90° turns
-* 180° turns
-* Navigation between maze cells
+The compact circular chassis allows Zahtar to rotate inside the maze cells while maintaining sufficient clearance from the walls.
 
-The robot uses four directional states:
+---
+
+## 🎛️ PID Control System
+
+Several PID-based controllers are used to improve the robot's movement accuracy.
+
+### Encoder PID
+
+Used to maintain synchronization between the left and right wheels.
 
 ```text
-FORWARD  →  0°
-RIGHT    →  90°
-BACKWARD →  180°
-LEFT     →  270°
+Kp = 1.75
+Ki = 0
+Kd = 0.5
 ```
 
-These states are represented in the firmware using:
+### Laser Distance PID
 
-```cpp
-enum LocalDirectionStates {
-    FORWARD_D,
-    RIGHT_D,
-    BACKWARD_D,
-    LEFT_D
-};
-```
-
----
-
-# ⚙️ Motors & Encoders
-
-Zahtar uses two independently controlled DC motors.
-
-Each wheel is equipped with a quadrature encoder.
-
-The encoders provide feedback for:
-
-* Measuring distance
-* Synchronizing both wheels
-* Straight-line movement
-* PID correction
-* Detecting movement
-* Controlling cell-to-cell motion
-
-Both encoder channels are handled using ESP32 interrupts.
-
----
-
-# 📐 Robot Dimensions
-
-| Specification      |  Value |
-| ------------------ | -----: |
-| Chassis Diameter   | 122 mm |
-| Wheel Diameter     |  46 mm |
-| Cell Movement Step |  21 cm |
-| Encoder Poles      |     14 |
-| Motor Gear Ratio   |   29:1 |
-
-The wheel diameter used by the firmware is:
-
-```cpp
-float wheelDiameter = 4.6;
-```
-
-where the value is measured in centimeters.
-
----
-
-# 🎛️ PID Control
-
-Multiple PID controllers are implemented to improve the robot's movement accuracy.
-
-## Encoder PID
-
-The encoder PID controller compares the left and right wheel movement and applies a correction to keep the robot moving straight.
+Used to maintain the robot's position relative to the maze walls.
 
 ```text
-Left Encoder ─────┐
-                  │
-                  ▼
-             Encoder PID
-                  │
-                  ▼
-          Motor Correction
-                  ▲
-                  │
-Right Encoder ────┘
+Kp = 1.75
+Ki = 0
+Kd = 0.5
+```
+
+### Turn PID
+
+Used to control rotational movement and accurately reach the desired yaw angle.
+
+```text
+Kp = 1.75
+Ki = 0
+Kd = 0.5
+```
+
+### Movement PID
+
+Used for accurate movement over a target distance.
+
+```text
+Kp = 0.4
+Kd = 0.1
 ```
 
 ---
 
-## Laser PID
+## 🚗 Movement System
 
-The side VL53L0X sensors provide continuous feedback during movement.
+The movement system combines multiple feedback sources instead of relying only on motor speed.
 
-The robot can use:
+During a cell movement, the robot can use:
 
-* Both walls
-* Left wall only
-* Right wall only
-* No side wall
+* Wheel encoder feedback
+* MPU6050 yaw feedback
+* Left and right VL53L0X measurements
+* Front-wall detection
 
-to calculate a lateral correction.
+The robot initially travels at its base speed and gradually reduces its speed during the second half of a movement to improve stopping accuracy.
 
-This allows the robot to maintain a more centered position inside the maze.
-
----
-
-## Turn PID
-
-The MPU6050 yaw angle is used as feedback for the turning controller.
-
-The controller calculates the difference between the target yaw and the current yaw and adjusts the motors until the robot reaches the desired heading.
+The speed is controlled between approximately **75% and 100% of the base speed** during the final part of the movement.
 
 ---
 
-## Distance PID
+## 🧱 Wall Detection & Recovery
 
-Encoder feedback is also used to control the distance traveled by the robot.
+The robot continuously monitors the environment for unexpected obstacles or movement problems.
 
-This allows Zahtar to move approximately one maze cell at a time rather than relying only on a fixed delay or motor speed.
+Wall detection can be combined with encoder feedback to identify situations where the robot is unable to continue moving.
 
----
+When the robot detects that it has reached an unexpected wall or becomes stalled, the recovery system can:
 
-# 🚗 Movement System
+1. Detect the problem.
+2. Determine the appropriate reverse direction.
+3. Move backward from the obstacle.
+4. Reset the encoder reference.
+5. Recalculate the robot's orientation.
+6. Continue maze navigation.
 
-The main movement function is:
-
-```cpp
-MoveStraight(float targetDistance_cm)
-```
-
-Before moving, the robot performs orientation and offset corrections.
-
-During movement it uses:
-
-1. Encoder feedback
-2. Distance PID
-3. Encoder synchronization
-4. Side-wall laser feedback
-5. Front-wall detection
-6. Motor speed correction
-
-The motor speeds are continuously adjusted according to sensor feedback.
-
-This allows the robot to correct its trajectory while moving through the maze.
+The recovery system also uses the robot's current and previous directions to avoid immediately moving back toward the wall that caused the problem.
 
 ---
 
-# 🧱 Wall Detection
+## 📡 Bluetooth Communication
 
-Zahtar uses both front and side sensors for maze navigation.
+Zahtar uses the ESP32 Bluetooth functionality for wireless debugging.
 
-## Front Wall
-
-An IR sensor is used to detect a wall in front of the robot.
-
-```cpp
-#define IR_pin 32
-```
-
-The firmware treats a LOW reading as a detected front wall.
-
----
-
-## Side Walls
-
-The left and right VL53L0X sensors are used to determine whether walls are present beside the robot.
-
-The navigation system provides:
-
-```cpp
-WallFrontPresent()
-WallLeftPresent()
-WallRightPresent()
-```
-
-These readings are converted into absolute maze directions and stored in the flood-fill map.
-
----
-
-# 📡 Bluetooth Communication
-
-Zahtar uses the ESP32 Bluetooth Serial interface for debugging and monitoring.
-
-The robot is initialized with the Bluetooth name:
+The Bluetooth device name is:
 
 ```text
 Zahtar
 ```
 
-Bluetooth communication is used to display information such as:
+Bluetooth output is used to monitor information such as:
 
-* Flood-fill grid
-* Maze information
-* Sensor readings
+* Current maze position
+* Current direction
+* Robot yaw
+* Yaw error
+* Left/right laser measurements
 * Encoder values
-* Yaw angle
-* Navigation status
-* Debug messages
+* Movement information
+* Flood-Fill state
 
-This was especially useful during development and testing because the robot could send its internal state wirelessly while operating.
-
----
-
-# 🔌 Wiring & Pin Assignments
-
-## Motor Driver
-
-| Component       | ESP32 GPIO |
-| --------------- | ---------: |
-| Left Motor ENA  |    GPIO 33 |
-| Left Motor IN1  |    GPIO 26 |
-| Left Motor IN2  |    GPIO 25 |
-| Right Motor ENA |    GPIO 12 |
-| Right Motor IN1 |    GPIO 14 |
-| Right Motor IN2 |    GPIO 27 |
+This makes it easier to diagnose navigation and movement problems without connecting the robot directly to a computer.
 
 ---
 
-## Encoders
+## 🔌 Wiring & Pin Assignments
 
-| Encoder       | Channel | ESP32 GPIO |
-| ------------- | ------- | ---------: |
-| Left Encoder  | C1      |    GPIO 19 |
-| Left Encoder  | C2      |    GPIO 18 |
-| Right Encoder | C1      |    GPIO 16 |
-| Right Encoder | C2      |    GPIO 17 |
+### Motor Driver
 
-Both channels of each encoder are connected to interrupts.
+| Function        | ESP32 Pin |
+| --------------- | --------: |
+| Left Motor ENA  |   GPIO 33 |
+| Left Motor IN1  |   GPIO 26 |
+| Left Motor IN2  |   GPIO 25 |
+| Right Motor ENA |   GPIO 12 |
+| Right Motor IN1 |   GPIO 14 |
+| Right Motor IN2 |   GPIO 27 |
 
----
+### Encoders
 
-## VL53L0X
+| Encoder | Channel | ESP32 Pin |
+| ------- | ------- | --------: |
+| Left    | C1      |   GPIO 19 |
+| Left    | C2      |   GPIO 18 |
+| Right   | C1      |   GPIO 16 |
+| Right   | C2      |   GPIO 17 |
 
-| Component        | ESP32 GPIO / Address |
-| ---------------- | -------------------: |
-| Left XSHUT       |               GPIO 5 |
-| Right XSHUT      |               GPIO 4 |
-| Left I²C Address |               `0x30` |
+### Sensors
 
----
+| Component     | Signal    | ESP32 Pin |
+| ------------- | --------- | --------: |
+| Left VL53L0X  | XSHUT     |    GPIO 5 |
+| Right VL53L0X | XSHUT     |    GPIO 4 |
+| IR Sensor     | Signal    |   GPIO 32 |
+| MPU6050       | Interrupt |   GPIO 15 |
+| LED           | Signal    |    GPIO 2 |
 
-## Other Components
+### Communication
 
-| Component       |      Connection |
-| --------------- | --------------: |
-| Front IR Sensor |         GPIO 32 |
-| On-board LED    |          GPIO 2 |
-| MPU6050         |             I²C |
-| VL53L0X Sensors |             I²C |
-| Bluetooth       | ESP32 Bluetooth |
+The sensors communicate with the ESP32 through the I²C interface.
 
----
-
-# 🏗️ Chassis Design
-
-The robot chassis was designed around the requirements of a compact MicroMouse robot.
-
-The design focuses on:
-
-* Compact dimensions
-* Differential-drive movement
-* Stable wheel placement
-* Side sensor positioning
-* Front-wall detection
-* Encoder integration
-* MPU6050 integration
-* Easy access to electronics
-
-The robot chassis has a diameter of approximately **122 mm** and uses **46 mm wheels**.
-
-The repository contains the 3D-printable chassis model.
-
----
-
-# 🧩 System Architecture
+The I²C clock is configured to:
 
 ```text
-                         ┌─────────────────────┐
-                         │        ESP32        │
-                         │   Main Controller   │
-                         └──────────┬──────────┘
-                                    │
-              ┌─────────────────────┼─────────────────────┐
-              │                     │                     │
-              ▼                     ▼                     ▼
-       ┌────────────┐        ┌────────────┐       ┌────────────┐
-       │  MPU6050   │        │  VL53L0X   │       │ IR Sensor  │
-       │    Yaw     │        │  Distance  │       │   Front    │
-       └─────┬──────┘        └──────┬─────┘       └──────┬─────┘
-             │                      │                    │
-             └──────────────────────┼────────────────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │    Flood-Fill       │
-                         │     Navigation      │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │   PID Motion        │
-                         │     Control         │
-                         └──────────┬──────────┘
-                                    │
-                         ┌──────────┴──────────┐
-                         ▼                     ▼
-                   ┌───────────┐         ┌───────────┐
-                   │Left Motor │         │Right Motor│
-                   └─────┬─────┘         └─────┬─────┘
-                         │                     │
-                         ▼                     ▼
-                   Left Encoder          Right Encoder
-                         │                     │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                                  ESP32
+400 kHz
 ```
 
 ---
 
-# 💻 Software & Libraries
+## 🏗️ Chassis Design
 
-The project uses the following libraries:
+The robot uses a compact circular chassis with a diameter of approximately **122 mm**.
+
+The chassis was designed to:
+
+* Fit inside the maze cell dimensions
+* Provide sufficient space for the ESP32 and electronics
+* Support two drive motors
+* Position the distance sensors toward the maze walls
+* Maintain a balanced center of mass
+* Allow the robot to rotate within a maze cell
+
+The repository includes the chassis design files for reproduction and further modification.
+
+---
+
+## 🏛️ System Architecture
+
+The overall system can be divided into several layers:
 
 ```text
-MPU6050_6Axis_MotionApps20
-Adafruit_VL53L0X
-I2Cdev
-Wire
-BluetoothSerial
-```
+                    ┌─────────────────────┐
+                    │       ESP32         │
+                    │   Main Controller   │
+                    └──────────┬──────────┘
+                               │
+          ┌────────────────────┼────────────────────┐
+          │                    │                    │
+          ▼                    ▼                    ▼
+    ┌───────────┐        ┌───────────┐        ┌───────────┐
+    │ VL53L0X   │        │ MPU6050   │        │ Encoders  │
+    │  Sensors  │        │    IMU    │        │           │
+    └─────┬─────┘        └─────┬─────┘        └─────┬─────┘
+          │                    │                    │
+          └────────────────────┼────────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │   Control System    │
+                    │   PID Controllers   │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │   Motor Controller  │
+                    └──────────┬──────────┘
+                               ▼
+                         ┌───────────┐
+                         │  Motors   │
+                         └───────────┘
 
-The flood-fill and maze-management system also uses standard C++ containers including:
-
-```text
-vector
-stack
-queue
-string
-utility
-algorithm
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Flood-Fill        │
+                    │   Navigation        │
+                    └─────────────────────┘
 ```
 
 ---
 
-# 📁 Project Structure
+## 💻 Software & Libraries
+
+The project is developed using the **Arduino framework for ESP32**.
+
+Main libraries include:
+
+```cpp
+#include "MPU6050_6Axis_MotionApps20.h"
+#include <Adafruit_VL53L0X.h>
+#include "I2Cdev.h"
+#include <Wire.h>
+#include <BluetoothSerial.h>
+```
+
+The software combines sensor processing, motor control, PID controllers, and Flood-Fill navigation into a single autonomous control system.
+
+---
+
+## 📁 Project Structure
+
+A simplified organization of the project is:
 
 ```text
-Autonomous_Robot/
+Zahtar/
 │
-├── floodfill.cpp
-│   └── Main ESP32 Arduino firmware
+├── README.md
 │
-├── micromouse.stl
-│   └── 3D-printable chassis
+├── Code/
+│   └── Zahtar.ino
 │
-├── Interface_Presentation.pdf
-│   └── Project presentation
+├── Chassis/
+│   └── *.stl
 │
-└── README.md
-    └── Project documentation
+├── Presentation/
+│   └── Interface_Presentation.pdf
+│
+└── Documentation/
+    └── Images / Diagrams
 ```
 
 ---
 
-# 🏁 Competition Achievement
+## 🏆 Competition Achievement
 
-## 🇵🇸 First MicroMouse Maze Competition in Palestine
+### 5th Place — First Palestinian MicroMouse Maze Competition
 
-Zahtar was developed and entered into the first MicroMouse Maze Competition in Palestine.
-
-The team achieved:
+Zahtar successfully competed in the first MicroMouse Maze Competition in Palestine and achieved:
 
 ```text
-┌─────────────────────────────┐
-│       🏆 5th PLACE          │
-│                             │
-│     ⏱️ ~1 MINUTE            │
-│                             │
-│  Maze Solving Competition   │
-└─────────────────────────────┘
+🏆 Position: 5th Place
+⏱️ Maze solving time: ~1 minute
 ```
 
-The competition was established by **Code Academy** and funded by **Gaza Sky Geeks**.
+The result represents the outcome of the team's work across:
 
-### Official Competition Website
+* Mechanical design
+* Electronics
+* Embedded programming
+* Autonomous navigation
+* Sensor integration
+* PID control
+* Maze-solving algorithms
 
-🌐 **https://micromouse.site/**
+Competition website:
 
----
-
-# 👥 Team
-
-This project was developed by:
-
-### Mohammed Zogahyyer
-
-[![GitHub](https://img.shields.io/badge/GitHub-Mohammed%20Zogahyyer-black?logo=github)](https://github.com/mohammadzoghaier1-coder)
-
-**GitHub:**
-https://github.com/mohammadzoghaier1-coder
+https://micromouse.site/
 
 ---
 
-### Belal Amleh
+## ⭐ Project Highlights
 
-[![GitHub](https://img.shields.io/badge/GitHub-Belal--amleh-black?logo=github)](https://github.com/Belal-amleh)
-
-**GitHub:**
-https://github.com/Belal-amleh
-
----
-
-### Omar Abu Fanoon
-
-[![GitHub](https://img.shields.io/badge/GitHub-Omar%20Abu%20Fanoon-black?logo=github)](https://github.com/omarmohammadabufanoon)
-
-**GitHub:**
-https://github.com/omarmohammadabufanoon
+* 🤖 Autonomous maze-solving robot
+* 🧠 Flood-Fill maze navigation
+* 📡 Dual VL53L0X wall-distance sensing
+* 🧭 MPU6050 orientation control
+* ⚙️ Quadrature encoder feedback
+* 🎛️ Multiple PID controllers
+* 🔄 Automatic dead-end and wall recovery
+* 📱 Bluetooth debugging
+* 🏗️ Custom-designed chassis
+* 🏆 5th place in the first MicroMouse Maze Competition in Palestine
+* ⏱️ Approximately 1-minute maze solving time
 
 ---
 
-# 🌟 Project Highlights
+## 🙏 Acknowledgements
 
-```text
-🇵🇸 First MicroMouse Maze Competition in Palestine
-🏆 5th Place
-⏱️ ~1 Minute Maze Solving Time
-🤖 Autonomous Robot
-🧠 Flood-Fill Navigation
-📡 ESP32
-📏 VL53L0X Distance Sensors
-🧭 MPU6050 Orientation Tracking
-⚙️ Quadrature Encoders
-🎛️ PID Motion Control
-🖨️ 3D-Printed Chassis
-📡 Bluetooth Debugging
-```
+Special thanks to:
+
+* **Code Academy** — for establishing and organizing the competition.
+* **Gaza Sky Geeks** — for funding and supporting the competition.
+* The organizers and participants who contributed to creating the first MicroMouse competition environment in Palestine.
 
 ---
 
-# 📜 License
+## 📜 License
 
-Add your preferred open-source license here.
+This project is available for educational and research purposes.
+
+Feel free to explore, modify, and build upon the project.
