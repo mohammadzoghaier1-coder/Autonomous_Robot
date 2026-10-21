@@ -10,6 +10,8 @@ Our robot **Zahtar achieved 5th place** in the competition, successfully solving
 
 Competition website:
 https://micromouse.site/
+Competition Video:
+https://youtu.be/e48Lq5B83_4
 
 ## 👥 Team Members
 
